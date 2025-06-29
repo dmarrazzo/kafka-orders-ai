@@ -1,0 +1,15 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: librechat-route
+spec:
+  port:
+    targetPort: 3080
+  tls:
+    insecureEdgeTerminationPolicy: None
+    termination: edge
+  to:
+    kind: Service
+    name: librechat
+    weight: 100
+  wildcardPolicy: None

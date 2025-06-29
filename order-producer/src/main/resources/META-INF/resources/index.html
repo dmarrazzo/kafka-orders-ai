@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Orders</title>
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly-additions.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title">Order Generator</h2>
+                <div class="average"><h3>&nbsp;</h3></div>
+                <input type="number" id="qty" name="qty" value="5">
+                <button class="btn btn-info" id="order-gen">Generate Orders</button>
+                <div class="orders"></div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $("#order-gen").click((event) => {
+        let qty = $("#qty").val();
+        fetch("/order/generate?" + $.param({"qty" : qty}), {
+                method: "POST"
+            })
+            .then(res => res.text())
+            .then(ordersJson => {
+                var orders = JSON.parse(ordersJson);
+                for (const order of orders) {
+                    var row = $(`<h4 class='col-md-12' id='${order.id}'>Order # <i>${order.id}</i> ${order.country} ${order.client} ${order.amount}</h4>`);
+                    $(".orders").append(row);                    
+                }
+            });
+    });
+</script>
+
+</html>

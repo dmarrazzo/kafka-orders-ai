@@ -1,0 +1,347 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: librechat-pod
+spec:
+  containers:
+  - args:
+    - npm
+    - run
+    - backend
+    env:
+    - name: LOGIN_WINDOW
+      value: "5"
+    - name: OPENID_SCOPE
+      value: '"openid profile email"'
+    - name: DEBUG_OPENAI
+      value: "false"
+    - name: LOGIN_MAX
+      value: "7"
+    - name: ASSISTANTS_API_KEY
+      value: user_provided
+    - name: MESSAGE_IP_WINDOW
+      value: "1"
+    - name: DOMAIN_CLIENT
+      value: http://localhost:3080
+    - name: REGISTER_MAX
+      value: "5"
+    - name: HELP_AND_FAQ_URL
+      value: https://librechat.ai
+    - name: REGISTER_WINDOW
+      value: "60"
+    - name: REGISTRATION_VIOLATION_SCORE
+      value: "1"
+    - name: BAN_DURATION
+      value: 1000 * 60 * 60 * 2
+    - name: LIMIT_CONCURRENT_MESSAGES
+      value: "true"
+    - name: DOMAIN_SERVER
+      value: http://localhost:3080
+    - name: ANTHROPIC_API_KEY
+      value: user_provided
+    - name: GOOGLE_CALLBACK_URL
+      value: /oauth/google/callback
+    - name: ALLOW_SHARED_LINKS_PUBLIC
+      value: "true"
+    - name: PORT
+      value: "3080"
+    - name: CONSOLE_JSON
+      value: "false"
+    - name: ILLEGAL_MODEL_REQ_SCORE
+      value: "5"
+    - name: DISCORD_CALLBACK_URL
+      value: /oauth/discord/callback
+    - name: CONCURRENT_MESSAGE_MAX
+      value: "2"
+    - name: MEILI_HOST
+      value: http://librechat-pod:7700
+    - name: CREDS_KEY
+      value: f34be427ebb29de8d88c107a71546019685ed8b241d8f2ed00c3df97ad2566f0
+    - name: MONGO_URI
+      value: mongodb://librechat-pod:27017/LibreChat
+    - name: LIMIT_MESSAGE_IP
+      value: "true"
+    - name: MESSAGE_USER_MAX
+      value: "40"
+    - name: JWT_SECRET
+      value: 16f8c0ef4a5d391b26034086c628469d3f9f497f08163ab9b40137092f2909ef
+    - name: OPENAI_API_KEY
+      value: user_provided
+    - name: FACEBOOK_CALLBACK_URL
+      value: /oauth/facebook/callback
+    - name: MEILI_NO_SYNC
+      value: "true"
+    - name: APP_TITLE
+      value: LibreChat
+    - name: DEBUG_LOGGING
+      value: "true"
+    - name: LDAP_SEARCH_FILTER
+      value: mail={{username}}
+    - name: DEBUG_CONSOLE
+      value: "false"
+    - name: ALLOW_SHARED_LINKS
+      value: "true"
+    - name: GITHUB_CALLBACK_URL
+      value: /oauth/github/callback
+    - name: ALLOW_PASSWORD_RESET
+      value: "false"
+    - name: BAN_VIOLATIONS
+      value: "true"
+    - name: OPENAI_MODERATION
+      value: "false"
+    - name: BAN_INTERVAL
+      value: "20"
+    - name: MESSAGE_IP_MAX
+      value: "40"
+    - name: CHECK_BALANCE
+      value: "false"
+    - name: ALLOW_SOCIAL_LOGIN
+      value: "false"
+    - name: SD_WEBUI_URL
+      value: http://localhost:7860
+    - name: LIMIT_MESSAGE_USER
+      value: "false"
+    - name: FLUX_API_BASE_URL
+      value: https://api.us1.bfl.ai
+    - name: OPENID_CALLBACK_URL
+      value: /oauth/openid/callback
+    - name: APPLE_CALLBACK_URL
+      value: /oauth/apple/callback
+    - name: MESSAGE_USER_WINDOW
+      value: "1"
+    - name: GOOGLE_KEY
+      value: user_provided
+    - name: NO_INDEX
+      value: "true"
+    - name: CONCURRENT_VIOLATION_SCORE
+      value: "1"
+    - name: LOGIN_VIOLATION_SCORE
+      value: "1"
+    - name: MEILI_MASTER_KEY
+      value: DrhYf7zENyR6AlUCKmnz0eYASOQdl6zxH7s7MKFSfFCt
+    - name: TRUST_PROXY
+      value: "1"
+    - name: CREDS_IV
+      value: e2341419ec3dd3d19b13a1a87fafcbfb
+    - name: MESSAGE_VIOLATION_SCORE
+      value: "1"
+    - name: REFRESH_TOKEN_EXPIRY
+      value: (1000 * 60 * 60 * 24) * 7
+    - name: ALLOW_UNVERIFIED_EMAIL_LOGIN
+      value: "true"
+    - name: EMAIL_FROM
+      value: noreply@librechat.ai
+    - name: EMAIL_PORT
+      value: "25"
+    - name: SEARCH
+      value: "true"
+    - name: NON_BROWSER_VIOLATION_SCORE
+      value: "20"
+    - name: JWT_REFRESH_SECRET
+      value: eaa5191f2914e30b9387fd84e254e4ba6fc51b4654968a9b0803b456a54b8418
+    - name: MEILI_NO_ANALYTICS
+      value: "true"
+    - name: ALLOW_REGISTRATION
+      value: "true"
+    - name: SESSION_EXPIRY
+      value: 1000 * 60 * 15
+    - name: ALLOW_SOCIAL_REGISTRATION
+      value: "false"
+    - name: ALLOW_EMAIL_LOGIN
+      value: "true"
+    - name: DEBUG_PLUGINS
+      value: "true"
+    image: default-route-openshift-image-registry.apps.ocp.dmshift.eu/librechat/librechat:latest
+    name: librechat
+    envFrom:
+      - configMapRef:
+          name: librechat-env
+    ports:
+    - containerPort: 3080
+      name: http
+      protocol: TCP
+    securityContext: {}
+    volumeMounts:
+    - name: librechat-config
+      mountPath: /app/librechat.yaml
+      subPath: librechat.yaml
+  - name: librechat-meilisearch
+#    image: docker.io/getmeili/meilisearch:v1.0
+    image: default-route-openshift-image-registry.apps.ocp.dmshift.eu/librechat/meilisearch:v1.0
+    args:
+    - /bin/sh
+    - -c
+    - /bin/meilisearch
+    env:
+    - name: HOST
+      value: localhost
+    - name: MEILI_HOST
+      value: http://librechat-pod:7700
+    - name: CREDS_IV
+      value: e2341419ec3dd3d19b13a1a87fafcbfb
+    - name: OPENID_CALLBACK_URL
+      value: /oauth/openid/callback
+    - name: ALLOW_EMAIL_LOGIN
+      value: "true"
+    - name: LOGIN_MAX
+      value: "7"
+    - name: LIMIT_MESSAGE_USER
+      value: "false"
+    - name: MESSAGE_USER_WINDOW
+      value: "1"
+    - name: LIMIT_MESSAGE_IP
+      value: "true"
+    - name: EMAIL_PORT
+      value: "25"
+    - name: BAN_VIOLATIONS
+      value: "true"
+    - name: JWT_SECRET
+      value: 16f8c0ef4a5d391b26034086c628469d3f9f497f08163ab9b40137092f2909ef
+    - name: CREDS_KEY
+      value: f34be427ebb29de8d88c107a71546019685ed8b241d8f2ed00c3df97ad2566f0
+    - name: LIMIT_CONCURRENT_MESSAGES
+      value: "true"
+    - name: OPENID_SCOPE
+      value: '"openid profile email"'
+    - name: LDAP_SEARCH_FILTER
+      value: mail={{username}}
+    - name: EMAIL_FROM
+      value: noreply@librechat.ai
+    - name: PORT
+      value: "3080"
+    - name: ALLOW_UNVERIFIED_EMAIL_LOGIN
+      value: "true"
+    - name: REGISTER_MAX
+      value: "5"
+    - name: MEILI_NO_SYNC
+      value: "true"
+    - name: MEILI_MASTER_KEY
+      value: DrhYf7zENyR6AlUCKmnz0eYASOQdl6zxH7s7MKFSfFCt
+    - name: ALLOW_SHARED_LINKS_PUBLIC
+      value: "true"
+    - name: NON_BROWSER_VIOLATION_SCORE
+      value: "20"
+    - name: ALLOW_SOCIAL_LOGIN
+      value: "false"
+    - name: ALLOW_SHARED_LINKS
+      value: "true"
+    - name: GOOGLE_KEY
+      value: user_provided
+    - name: CONCURRENT_MESSAGE_MAX
+      value: "2"
+    - name: JWT_REFRESH_SECRET
+      value: eaa5191f2914e30b9387fd84e254e4ba6fc51b4654968a9b0803b456a54b8418
+    - name: MEILI_NO_ANALYTICS
+      value: "true"
+    - name: ALLOW_REGISTRATION
+      value: "true"
+    - name: OPENAI_API_KEY
+      value: user_provided
+    - name: SESSION_EXPIRY
+      value: 1000 * 60 * 15
+    - name: LOGIN_VIOLATION_SCORE
+      value: "1"
+    - name: GOOGLE_CALLBACK_URL
+      value: /oauth/google/callback
+    - name: APPLE_CALLBACK_URL
+      value: /oauth/apple/callback
+    - name: DEBUG_LOGGING
+      value: "true"
+    - name: MESSAGE_IP_WINDOW
+      value: "1"
+    - name: MESSAGE_USER_MAX
+      value: "40"
+    - name: REGISTRATION_VIOLATION_SCORE
+      value: "1"
+    - name: FACEBOOK_CALLBACK_URL
+      value: /oauth/facebook/callback
+    - name: REFRESH_TOKEN_EXPIRY
+      value: (1000 * 60 * 60 * 24) * 7
+    - name: TRUST_PROXY
+      value: "1"
+    - name: DISCORD_CALLBACK_URL
+      value: /oauth/discord/callback
+    - name: APP_TITLE
+      value: LibreChat
+    - name: FLUX_API_BASE_URL
+      value: https://api.us1.bfl.ai
+    - name: SEARCH
+      value: "true"
+    - name: ILLEGAL_MODEL_REQ_SCORE
+      value: "5"
+    - name: MONGO_URI
+      value: mongodb://librechat-pod:27017/LibreChat
+    - name: DEBUG_OPENAI
+      value: "false"
+    - name: GITHUB_CALLBACK_URL
+      value: /oauth/github/callback
+    - name: DOMAIN_CLIENT
+      value: http://localhost:3080
+    - name: MESSAGE_IP_MAX
+      value: "40"
+    - name: CHECK_BALANCE
+      value: "false"
+    - name: CONSOLE_JSON
+      value: "false"
+    - name: DOMAIN_SERVER
+      value: http://localhost:3080
+    - name: LOGIN_WINDOW
+      value: "5"
+    - name: NO_INDEX
+      value: "true"
+    - name: DEBUG_CONSOLE
+      value: "false"
+    - name: BAN_DURATION
+      value: 1000 * 60 * 60 * 2
+    - name: ASSISTANTS_API_KEY
+      value: user_provided
+    - name: ALLOW_PASSWORD_RESET
+      value: "false"
+    - name: BAN_INTERVAL
+      value: "20"
+    - name: DEBUG_PLUGINS
+      value: "true"
+    - name: CONCURRENT_VIOLATION_SCORE
+      value: "1"
+    - name: MESSAGE_VIOLATION_SCORE
+      value: "1"
+    - name: SD_WEBUI_URL
+      value: http://localhost:7860
+    - name: HELP_AND_FAQ_URL
+      value: https://librechat.ai
+    - name: REGISTER_WINDOW
+      value: "60"
+    - name: ANTHROPIC_API_KEY
+      value: user_provided
+    - name: ALLOW_SOCIAL_REGISTRATION
+      value: "false"
+    - name: OPENAI_MODERATION
+      value: "false"
+    volumeMounts:
+    - mountPath: /meili_data
+      name: librechat-meilisearch-data-pvc
+  - name: librechat-mongodb
+#    image: docker.io/library/mongo:latest
+    image: default-route-openshift-image-registry.apps.ocp.dmshift.eu/librechat/mongo:latest
+# librechat/mongo:latest
+    args:
+    - mongod
+    - --noauth
+    volumeMounts:
+    - mountPath: /data/configdb
+      name: mongo-volume-pvc
+    - mountPath: /data/db
+      name: librechat-mongodb-data-pvc
+  volumes:
+  - name: librechat-config
+    configMap:
+      name: librechat
+  - name: librechat-meilisearch-data-pvc
+    persistentVolumeClaim:
+      claimName: librechat-meilisearch-data
+  - name: mongo-volume-pvc
+    persistentVolumeClaim:
+      claimName: mongo-volume
+  - name: librechat-mongodb-data-pvc
+    persistentVolumeClaim:
+      claimName: librechat-mongodb-data
