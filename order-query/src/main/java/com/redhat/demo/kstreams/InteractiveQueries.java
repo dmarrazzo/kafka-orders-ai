@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StoreQueryParameters;
+import org.apache.kafka.streams.errors.InvalidStateStoreException;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyWindowStore;
 import org.jboss.logging.Logger;
@@ -27,22 +28,23 @@ public class InteractiveQueries {
         var list = new ArrayList<OrderAggregate>();
 
         try {
-            // 1. Create StoreQueryParameters
+            // Create StoreQueryParameters to retrive the queryable (materialized) store
 
             StoreQueryParameters<ReadOnlyWindowStore<String, OrderAggregate>> queryParams = StoreQueryParameters
                     .fromNameAndType(
                             TopologyProducer.STORE_NAME,
                             QueryableStoreTypes.windowStore());
 
-            // 2. Pass the StoreQueryParameters object to the store method
+            // Pass the StoreQueryParameters object to the store method
 
-            ReadOnlyWindowStore<String, OrderAggregate> keyValueStore = streams.store(queryParams);
+            ReadOnlyWindowStore<String, OrderAggregate> queryableStore = streams.store(queryParams);
 
+            // Now you can use queryableStore to query your data
+ 
             Instant timeTo = Instant.now();
             Instant timeFrom = timeTo.minus(Duration.ofSeconds(seconds));
-            // Now you can use keyValueStore to query your data
-            // You can also iterate through the store
-            keyValueStore
+            
+            queryableStore
                     .backwardFetchAll(timeFrom, timeTo)
                     .forEachRemaining(
                             kv -> {
@@ -52,7 +54,7 @@ public class InteractiveQueries {
                     );
             LOG.info("list size: " + list.size());
 
-        } catch (org.apache.kafka.streams.errors.InvalidStateStoreException e) {
+        } catch (InvalidStateStoreException e) {
             // This happens if the stream is still starting up or rebalancing
             // You might need to retry or handle this gracefully in a real application.
             LOG.error("State store is not yet ready for querying: " + e.getMessage());

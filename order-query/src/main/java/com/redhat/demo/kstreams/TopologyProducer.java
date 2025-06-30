@@ -4,13 +4,11 @@ import java.time.Duration;
 
 import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.utils.Bytes;
-import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Materialized;
-import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.apache.kafka.streams.state.WindowStore;
 
@@ -32,28 +30,22 @@ public class TopologyProducer {
         StreamsBuilder builder = new StreamsBuilder();
 
         var orderSerde = new ObjectMapperSerde<>(Order.class);
-        var orderAggregateSerde = new ObjectMapperSerde<>(OrderAggregate.class);
-
-        KStream<String, Order> orderStream = builder.stream("orders",
-                Consumed.with(Serdes.String(), orderSerde));
 
         var materializedStore = Materialized
                 .<String, OrderAggregate, WindowStore<Bytes, byte[]>>as(STORE_NAME)
                 .withKeySerde(Serdes.String())
                 .withValueSerde(new OrderAggregateSerde());
+                
+        KStream<String, Order> orderStream = builder.stream("orders",
+                Consumed.with(Serdes.String(), orderSerde));
 
         orderStream
                 .groupByKey()
-                .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(60)))
+                .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(120)))
                 .aggregate(
                         OrderAggregate::new,
                         (k, order, aggregator) -> aggregator.aggregate(order),
-                        materializedStore)
-                .toStream()
-                .map((kv, aggregate) -> {
-                    return new KeyValue<>(kv.key(), aggregate);
-                })
-                .to(TOPIC, Produced.with(Serdes.String(), orderAggregateSerde));
+                        materializedStore);
 
         var topology = builder.build();
 
