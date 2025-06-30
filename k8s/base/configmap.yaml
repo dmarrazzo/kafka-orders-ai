@@ -5,6 +5,5 @@ metadata:
   name: kafka-orders-ai-config
 data:
   KAFKA_BOOTSTRAP_SERVERS: my-cluster-kafka-bootstrap.kafka-demo.svc:9092
-  KAFKACONSUMER_BOOTSTRAP_SERVER: my-cluster-kafka-bootstrap.kafka-demo.svc:9092
-  QUARKUS_LOG_LEVEL: TRACE
+  QUARKUS_LOG_LEVEL: INFO
   KAFKA_STREAMS_STATE_DIR: /kstreams/state

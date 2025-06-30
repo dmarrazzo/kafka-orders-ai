@@ -16,17 +16,17 @@ public interface KafkaConsumerConfig {
         @WithDefault("orders")
         String topic();
 
-        @WithDefault("localhost:9092")
-        String bootstrapServer();
-
         @WithDefault("5")
         long lastMessagesLength();
 
         default Properties props() {
                 Properties props = new Properties();
+                String bootstrapServer = System.getenv("KAFKA_BOOTSTRAP_SERVERS");
+                if (bootstrapServer == null || bootstrapServer.length() == 0)
+                        bootstrapServer = "localhost:9092";
 
                 // configure the bootstrap server
-                props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer());
+                props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServer );
 
                 props.put(ConsumerConfig.GROUP_ID_CONFIG, "orders-cgroup");
                 props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
