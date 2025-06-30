@@ -83,7 +83,7 @@ actions:
 # Example MCP Servers Object Structure
 
 mcpServers:
-  everything:
+  orders_tools:
     url: http://order-query.kafka-orders-ai.svc/mcp/sse
     timeout: 60000 
 
