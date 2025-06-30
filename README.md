@@ -4,6 +4,14 @@ Kafka Orders AI
 Deploy Quarkus projects on OpenShift
 --------------------------------------------------------
 
+### Prerequisites
+
+The Quarkus applications relies on a pre-existing Kafka server installation.
+
+The actual Kafka bootstrap address has to be configured here: [k8s/base/configmap.yaml]()
+
+### Deployment
+
 Create project:
 ```sh
 oc new-project kafka-orders-ai
