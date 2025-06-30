@@ -44,16 +44,11 @@ public class TopologyProducer {
 
         orderStream
                 .groupByKey()
-                .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(60)))
+                .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(120)))
                 .aggregate(
                         OrderAggregate::new,
                         (k, order, aggregator) -> aggregator.aggregate(order),
-                        materializedStore)
-                .toStream()
-                .map((kv, aggregate) -> {
-                    return new KeyValue<>(kv.key(), aggregate);
-                })
-                .to(TOPIC, Produced.with(Serdes.String(), orderAggregateSerde));
+                        materializedStore);
 
         var topology = builder.build();
 
