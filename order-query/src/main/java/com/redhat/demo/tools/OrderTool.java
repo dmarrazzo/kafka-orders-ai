@@ -20,12 +20,12 @@ public class OrderTool {
     TopicConsumer consumer;
 
     @Tool(description = """
-            Retrieve orders aggregated by client name over a periond of 120 seconds.
-            Use this tool to retrieve orders for a time period.
+            Retrieve orders aggregated by client name over a periond of 10 minutes.
+            The tools does not provide country information, in fact the same client can have orders coming from different countries.
             The result is the list of clients name with the sum of order amounts, the number of orders, and the average amount of the aggregated orders.
             """)
     public List<OrderAggregate> aggregate() {
-        return queries.getOrderAggregate(120);
+        return queries.getOrderAggregate(600);
     }
 
     @Tool(description = """

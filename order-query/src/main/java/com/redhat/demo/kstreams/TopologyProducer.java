@@ -41,7 +41,7 @@ public class TopologyProducer {
 
         orderStream
                 .groupByKey()
-                .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(120)))
+                .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofSeconds(600)))
                 .aggregate(
                         OrderAggregate::new,
                         (k, order, aggregator) -> aggregator.aggregate(order),
