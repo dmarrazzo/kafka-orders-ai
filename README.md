@@ -1,6 +1,46 @@
 Kafka Orders AI
 ========================================================
 
+Run locally
+--------------------------------------------------------
+
+### Run Quarkus projects in dev mode
+
+Run the order producer:
+```sh
+./mvnw -f order-producer quarkus:dev
+```
+
+In different terminal, run the order query:
+
+```sh
+./mvnw -f order-query  quarkus:dev -Ddebug=5006 -Dquarkus.http.port=8090
+```
+
+### Run Librechat
+
+Follow instruction at https://www.librechat.ai/docs/local/docker to run Librechat in a local container.
+
+> _NOTE:_ If you are a **podman** user, you may find `podman kube play` more appropriate, here an example: [/librechat/podman-kube-play.yaml]().
+
+
+Update the configuration file (`librechat.yaml`) to include the address of the local **Quarkus MCP Server**.
+
+```yaml
+mcpServers:
+  kafka:
+    url: http://host.docker.internal:8090/mcp/sse
+    timeout: 60000 
+```
+
+Create an agent, in my test I used the following agent instructions:
+
+```
+you are an helpful assistant that offer information about order. When you don't have enough information use tools provided to extract information. When the result contains more than 2 items, format the response in table.
+```
+
+Make sure to add the **Kafka tools**.
+
 Deploy Quarkus projects on OpenShift
 --------------------------------------------------------
 
