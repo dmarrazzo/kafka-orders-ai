@@ -17,21 +17,76 @@ In different terminal, run the order query:
 ./mvnw -f order-query  quarkus:dev -Ddebug=5006 -Dquarkus.http.port=8090
 ```
 
-### Run Librechat
+### Run LibreChat
 
-Follow instruction at https://www.librechat.ai/docs/local/docker to run Librechat in a local container.
+[LibreChat](https://www.librechat.ai/) is an open-source, self-hosted chat platform designed to provide a ChatGPT-like experience with enhanced privacy, flexibility, and extensibility. It allows users to interact with various AI models and services, including OpenAI, Google, and custom endpoints, all within a customizable web interface. LibreChat supports features such as multi-user authentication, social logins, conversation management, and integration with external tools and APIs.
 
-> _NOTE:_ If you are a **podman** user, you may find `podman kube play` more appropriate, here an example: [/librechat/podman-kube-play.yaml]().
+Here the instuctions to build and run a local container:
 
+1. Clone librechat project:
 
-Update the configuration file (`librechat.yaml`) to include the address of the local **Quarkus MCP Server**.
+   ```sh
+   git clone https://github.com/danny-avila/LibreChat.git
+   cd LibreChat
+   ```
 
-```yaml
-mcpServers:
-  kafka:
-    url: http://host.docker.internal:8090/mcp/sse
-    timeout: 60000 
-```
+2. This project has been tested with `v0.8.3-rc3`
+
+   ```sh
+   git checkout v0.8.0-rc3
+   ```
+
+3. Build image using the `Containerfile` provided in this project:
+
+   ```sh
+   podman build -t librechat:v0.8.0-rc3 -f ${PATH_TO_KAFKA_ORDERS_AI}/librechat/Containerfile .
+   ```
+
+4. Configure LibreChat
+
+   - Navigate to the `/librechat` directory in this project
+
+     ```sh
+     cd ${PATH_TO_KAFKA_ORDERS_AI}/librechat
+     ``` 
+
+   - Create a `librechat-env.yaml` file to store your API token(s). For example:
+
+     ```yaml
+     apiVersion: v1
+     kind: ConfigMap
+     metadata:
+       name: librechat-env
+     data:
+       MISTRAL_API_KEY: a...........................z
+     ```
+
+     > **TIP:** You can generate your API key by signing up for Model as a Service (MaaS) at: https://maas.apps.prod.rhoai.rh-aiservices-bu.com/.
+     LibreChat also supports other models, such as OpenAI—simply provide the relevant API key in your configuration.
+
+   - Make sure that the configuration file (`librechat.yaml`) include the address of the local **Quarkus MCP Server**.
+
+     ```yaml
+     mcpServers:
+       kafka:
+         url: http://host.docker.internal:8090/mcp/sse
+         timeout: 60000 
+     ```
+
+5. Launch the LibreChat pod:
+  
+   ```sh
+   podman kube play --configmap librechat-env.yaml podman-kube-play.yaml
+   ```
+
+### Build the Order Agent in LibreChat UI
+
+1. Access the LibreChat user interface by navigating to [http://localhost:3080/]() in your web browser.
+
+2. Follow the Sign-up procedure to create your user.
+
+3. Sign-in using the just created credentials.
+
 
 Create an agent, in my test I used the following agent instructions:
 

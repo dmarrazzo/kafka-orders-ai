@@ -84,30 +84,13 @@ actions:
 
 mcpServers:
   orders_tools:
-    url: http://order-query.kafka-orders-ai.svc/mcp/sse
+#    url: http://order-query.kafka-orders-ai.svc/mcp/sse
+    url: http://host.docker.internal:8090/mcp/sse
     timeout: 60000 
 
 # Definition of custom endpoints
 endpoints:
   custom:
-    - name: "MaaS Llama4"
-      apiKey: "${LLAMA4_API_KEY}"
-      # use 'host.docker.internal' instead of localhost if running LibreChat in a docker container
-      # baseURL: "http://host.docker.internal:11434/v1/chat/completions" 
-      baseURL: "https://llama-4-scout-17b-16e-w4a16-maas-apicast-production.apps.prod.rhoai.rh-aiservices-bu.com:443/v1" 
-      models:
-        default: [
-          "llama-4-scout-17b-16e-w4a16"
-        ]
-        # fetching list of models is supported but the `name` field must start
-        # with `ollama` (case-insensitive), as it does in this example.
-        fetch: true
-      titleConvo: true
-      titleModel: "current_model"
-      summarize: false
-      summaryModel: "current_model"
-      forcePrompt: false
-      modelDisplayLabel: "llama-4-scout-17b-16e-w4a16"
     - name: "MaaS Mistral"
       apiKey: "${MISTRAL_API_KEY}"
       # use 'host.docker.internal' instead of localhost if running LibreChat in a docker container
@@ -126,37 +109,3 @@ endpoints:
       summaryModel: "current_model"
       forcePrompt: false
       modelDisplayLabel: "mistral-small-24b-w8a8"
-    - name: "MaaS LLama 3.2"
-      apiKey: "${LLAMA_API_KEY}"
-      # use 'host.docker.internal' instead of localhost if running LibreChat in a docker container
-      # baseURL: "http://host.docker.internal:11434/v1/chat/completions" 
-      baseURL: "https://llama-3-2-3b-maas-apicast-production.apps.prod.rhoai.rh-aiservices-bu.com:443/v1" 
-      models:
-        default: [
-          "llama-3-2-3b"
-          ]
-        # fetching list of models is supported but the `name` field must start
-        # with `ollama` (case-insensitive), as it does in this example.
-        fetch: true
-      titleConvo: true
-      titleModel: "current_model"
-      summarize: false
-      summaryModel: "current_model"
-      forcePrompt: false
-      modelDisplayLabel: "llama-3-2-3b"
-    - name: "MaaS Qwen"
-      apiKey: "${QWEN_API_KEY}"
-      baseURL: "https://qwen25-vl-7b-instruct-maas-apicast-production.apps.prod.rhoai.rh-aiservices-bu.com:443/v1" 
-      models:
-        default: [
-          "RedHatAI/Qwen2.5-VL-7B-Instruct-FP8-Dynamic"
-        ]
-        # fetching list of models is supported but the `name` field must start
-        # with `ollama` (case-insensitive), as it does in this example.
-        fetch: true
-      titleConvo: true
-      titleModel: "current_model"
-      summarize: false
-      summaryModel: "current_model"
-      forcePrompt: false
-      modelDisplayLabel: "RedHatAI/Qwen2.5-VL-7B-Instruct-FP8-Dynamic"

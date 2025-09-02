@@ -4,10 +4,15 @@ metadata:
   name: librechat-pod
 spec:
   containers:
-  - args:
+  - name: librechat
+    image: default-route-openshift-image-registry.apps.ocp.dmshift.eu/librechat/librechat:latest
+    args:
     - npm
     - run
-    - backend
+    - backend    
+    envFrom:
+      - configMapRef:
+          name: librechat-env
     env:
     - name: LOGIN_WINDOW
       value: "5"
@@ -151,11 +156,6 @@ spec:
       value: "true"
     - name: DEBUG_PLUGINS
       value: "true"
-    image: default-route-openshift-image-registry.apps.ocp.dmshift.eu/librechat/librechat:latest
-    name: librechat
-    envFrom:
-      - configMapRef:
-          name: librechat-env
     ports:
     - containerPort: 3080
       name: http

@@ -9,6 +9,7 @@ resources:
 - ./pod.yaml
 - ./svc.yaml
 - ./route.yaml
+- ./librechat-env.yaml
 
 labels:
   - pairs:
@@ -19,9 +20,6 @@ configMapGenerator:
 - name: librechat
   files:
   - librechat.yaml
-- name: librechat-env
-  envs:
-    - .env
 
 generatorOptions:
   disableNameSuffixHash: true

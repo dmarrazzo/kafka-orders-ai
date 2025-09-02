@@ -9,10 +9,15 @@ metadata:
   name: librechat-pod
 spec:
   containers:
-  - args:
+  - image: librechat:v0.8.0-rc3
+    name: librechat
+    args:
     - npm
     - run
     - backend
+    envFrom:
+    - configMapRef:
+        name: librechat-env
     env:
     - name: LOGIN_WINDOW
       value: "5"
@@ -156,8 +161,6 @@ spec:
       value: "true"
     - name: DEBUG_PLUGINS
       value: "true"
-    image: localhost/librechat:local
-    name: librechat
     ports:
     - containerPort: 3080
       hostPort: 3080
@@ -165,7 +168,7 @@ spec:
     volumeMounts:
     - mountPath: /app/librechat.yaml
       name: local-librechat.yaml-host-0
-  - image: docker.io/getmeili/meilisearch:v1.0
+  - image: docker.io/getmeili/meilisearch:v1.12.3
     name: librechat-meilisearch
     args:
     - /bin/sh
@@ -322,11 +325,11 @@ spec:
   - args:
     - mongod
     - --noauth
-    image: docker.io/library/mongo:latest
+    image: mongo:8.0.13-noble
     name: librechat-mongodb
     volumeMounts:
     - mountPath: /data/configdb
-      name: mongo-volume-pvc
+      name: librechat-mongodb-config
     - mountPath: /data/db
       name: librechat-mongodb-data-pvc
   volumes:
@@ -337,7 +340,7 @@ spec:
   - name: librechat-meilisearch-data-pvc
     persistentVolumeClaim:
       claimName: librechat-meilisearch-data
-  - name: mongo-volume-pvc
+  - name: librechat-mongodb-config
     persistentVolumeClaim:
       claimName: mongo-volume
   - name: librechat-mongodb-data-pvc
