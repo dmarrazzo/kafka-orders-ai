@@ -83,18 +83,37 @@ Here the instuctions to build and run a local container:
 
 1. Access the LibreChat user interface by navigating to [http://localhost:3080/]() in your web browser.
 
-2. Follow the Sign-up procedure to create your user.
+2. Complete the sign-up process to create your LibreChat user account.
 
-3. Sign-in using the just created credentials.
+3. Log in with your new credentials and accept the terms and conditions when prompted.
 
+4. In the right panel of the LibreChat UI, configure your agent as follows:
 
-Create an agent, in my test I used the following agent instructions:
+   - **Name:** `Kafka Agent`
+   - **Model:** `mistral-small-24b-w8a8`
+   - **Instructions**:
+     ```
+     you will provide order information using available tools. When the result contains more than 2 items, format the response in table.
+     ```
 
-```
-you are an helpful assistant that offer information about order. When you don't have enough information use tools provided to extract information. When the result contains more than 2 items, format the response in table.
-```
+   - Click on `Add Tools` to open the tools selection dialog. Locate the `orders_tool` tile, click the `Add +` button, and then close the dialog.
 
-Make sure to add the **Kafka tools**.
+### Chat with the agent
+
+1. In the top navigation bar, click on the default model (`gpt-4o-mini`) and select `My agent > Kafka agent` from the dropdown.
+
+   ![agent selection](/images/agent-selection.png)
+
+2. Before starting a conversation, inject some new orders by visiting [http://localhost:8080/](). For best results, try adding 15 orders in 3 separate rounds, waiting a few seconds between each batch.
+
+3. Now you can chat with your agent. Here are some example prompts you can try:
+
+   - `show last 10 orders`
+   - `show last 4 orders and compute the average amount`
+   - `show orders aggregated by client over the last 10 minutes`
+   - `how many orders come from Stark industries in the last 10 minutes`
+
+> **Note:** Due to the inherent unpredictability of large language models (LLMs), responses may occasionally be inaccurate or incomplete.
 
 Deploy Quarkus projects on OpenShift
 --------------------------------------------------------
@@ -163,19 +182,14 @@ podman push $REGISTRY/librechat/librechat:latest
 oc patch imagestream librechat --type merge -p '{"spec":{"lookupPolicy":{"local":true}}}'
 ```
 
-Librechat comes with a set of models from [Model as a Service](https://maas.apps.prod.rhoai.rh-aiservices-bu.com/).
-You have to provide your own API KEYS to enable those models:
+Update the configuration file (`librechat.yaml`) to match the service address of the **Quarkus MCP Server**, e.g.:
 
-1. Create the file `librechat/.env`
-
-2. Add you own keys:
-
-    ```
-    LLAMA4_API_KEY=abc..........................123
-    LLAMA_API_KEY=abc..........................123
-    QWEN_API_KEY=abc..........................123
-    MISTRAL_API_KEY=abc..........................123
-    ```
+```yaml
+mcpServers:
+  kafka:
+    url: http://order-query.kafka-orders-ai.svc/mcp/sse
+    timeout: 60000 
+```
 
 Deploy manifests via Kustomizer:
 
