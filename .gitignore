@@ -1,10 +1,10 @@
-.*
 !.gitignore
 
 # secret environment variables
 librechat/librechat-env.yaml
 
 #Maven
+**/maven-wrapper.jar
 target/
 pom.xml.tag
 pom.xml.releaseBackup
