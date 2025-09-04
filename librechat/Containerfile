@@ -1,7 +1,7 @@
 # v0.8.0-rc3
 
 # Base node image
-FROM ubi9/nodejs-20:9.6-1750885770 AS node
+FROM registry.redhat.io/rhel9/nodejs-20:9.6 AS node
 
 USER root
 # Install jemalloc Python 3 and its pip

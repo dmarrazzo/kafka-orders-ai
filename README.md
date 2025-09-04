@@ -4,6 +4,34 @@ Kafka Orders AI
 Run locally
 --------------------------------------------------------
 
+### Prerequisites
+
+Required software:
+
+- JDK 21 (Java Development Kit)
+- Maven Wrapper (automatically downloaded by the provided scripts)
+- Podman (for container management)
+
+Authenticate Podman to download the container base image:
+
+```sh
+podman login registry.redhat.io
+```
+
+> **TIP:** Here information for [Registry Authentication](https://access.redhat.com/articles/RegistryAuthentication)
+
+Mac OS users reported missing dependencies in `order-query` project.
+In case add this snippet to `order-query/pom.xml`:
+
+```xml
+<dependency>
+    <groupId>org.rocksdb</groupId>
+    <artifactId>rocksdbjni</artifactId>
+    <version>7.9.2.redhat-00006</version>
+    <scope>compile</scope>
+</dependency>
+```
+
 ### Run Quarkus projects in dev mode
 
 Run the order producer:
