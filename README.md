@@ -90,7 +90,7 @@ Here the instuctions to build and run a local container:
      ```
 
      > **TIP:** You can generate your API key by signing up for Model as a Service (MaaS) at: https://maas.apps.prod.rhoai.rh-aiservices-bu.com/.
-     LibreChat also supports other models, such as OpenAI—simply provide the relevant API key in your configuration.
+     LibreChat also supports other models, such as OpenAI: simply provide the relevant API key in your configuration.
 
    - Make sure that the configuration file (`librechat.yaml`) include the address of the local **Quarkus MCP Server**.
 
